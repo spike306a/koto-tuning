@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f3ee">
+<title>KOTO TUNING</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #26343b;
+    --muted: #68777d;
+    --paper: #f5f3ee;
+    --card: #ffffff;
+    --line: #e5e2da;
+    --accent: #315b73;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 22px 14px 36px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { width: min(100%, 620px); margin: 0 auto; }
+  header { text-align: center; margin: 4px 0 20px; }
+  h1 { margin: 0; font-size: 1.55rem; letter-spacing: .08em; }
+  .subtitle { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .settings { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(112px, .85fr); gap: 10px 12px; }
+  .tuning-setting { grid-column: 1 / -1; }
+  .settings-top { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+  .reset {
+    border: 0; background: transparent; color: var(--accent);
+    font-size: .78rem; text-decoration: underline; cursor: pointer; padding: 4px 2px;
+  }
+  label { display: block; color: var(--muted); font-size: .78rem; margin-bottom: 6px; }
+  select {
+    width: 100%; min-height: 44px; padding: 8px 10px;
+    border: 1px solid #d7dce0; border-radius: 10px;
+    background: white; color: var(--ink); font: inherit;
+  }
+  .section-title { margin: 0 0 10px; font-size: 1rem; }
+  .octave-option {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .octave-toggle {
+    width: 100%; min-height: 44px; padding: 9px 12px;
+    border: 1px solid #d7dce0; border-radius: 10px;
+    background: white; color: var(--ink); font: inherit;
+    text-align: left; cursor: pointer;
+  }
+  .octave-toggle[aria-pressed="true"] {
+    border-color: var(--accent); background: var(--accent); color: white;
+    font-weight: 700;
+  }
+  .octave-toggle[aria-pressed="true"] .toggle-state { color: #ffffff; }
+  .toggle-state { float: right; color: var(--muted); font-size: .78rem; }
+  .reset {
+    min-height: 44px; padding: 8px 12px;
+    border: 1px solid #d7dce0; border-radius: 10px;
+    background: white; color: var(--accent);
+    font-size: .78rem; font-weight: 600; cursor: pointer;
+    white-space: nowrap; text-decoration: none;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .reset.has-changes {
+    border-color: #c47a28; background: #fff0d9; color: #854b12;
+  }
+  .sequence-option { grid-column: 1 / -1; }
+  .sequence-button {
+    width: 100%; min-height: 46px; padding: 10px 12px;
+    border: 0; border-radius: 10px; background: var(--accent);
+    color: white; font: inherit; font-weight: 650; cursor: pointer;
+  }
+  .sequence-button[aria-pressed="true"] { background: #8a4b43; }
+  .hint { margin: -4px 0 12px; color: var(--muted); font-size: .78rem; }
+  /* 13本の絃を上から順に並べ、箏の絃の並びを縦方向に表現 */
+  .strings { display: flex; flex-direction: column; gap: 7px; }
+  .string-card {
+    display: flex; align-items: center; gap: 12px; min-width: 0;
+    min-height: 58px; padding: 8px 12px;
+    background: #fbfbfa; border: 1px solid var(--line); border-radius: 10px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .string-card.is-adjusted {
+    background: #fff5e8;
+    border-color: #e3b46f;
+  }
+  .string-number {
+    width: 42px; flex: 0 0 42px; color: var(--accent);
+    font-size: 1.12rem; font-weight: 750; text-align: center;
+  }
+  .note-button {
+    flex: 1; min-width: 0; border: 0; padding: 5px 2px;
+    background: transparent; color: var(--ink); text-align: left; cursor: pointer;
+  }
+  .note-name { display: block; font-size: 1.28rem; font-weight: 700; line-height: 1.2; }
+  .play-icon { color: var(--accent); font-size: 1.15rem; padding: 6px; }
+  .adjust { display: flex; gap: 5px; align-items: center; }
+  .adjust button {
+    width: 42px; height: 42px; padding: 0; border: 1px solid var(--line);
+    border-radius: 9px; background: white; color: var(--accent);
+    font-size: 1.25rem; font-weight: 600; cursor: pointer;
+    touch-action: manipulation;
+  }
+  .footnote { color: var(--muted); font-size: .72rem; line-height: 1.5; margin: 12px 2px 0; }
+  button:focus-visible, select:focus-visible { outline: 3px solid #9dbbc9; outline-offset: 2px; }
+  @media (max-width: 380px) {
+    body { padding-inline: 10px; }
+    .panel { padding: 12px; }
+    .settings { grid-template-columns: minmax(0, 1.2fr) minmax(104px, .8fr); gap: 9px; }
+    .octave-option { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+    .reset { padding-inline: 9px; font-size: .72rem; }
+    .string-card { gap: 8px; padding: 8px 9px; }
+    .string-number { width: 38px; flex-basis: 38px; }
+    .adjust { gap: 5px; }
+    .adjust button { width: 40px; height: 42px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>KOTO TUNING</h1>
+    <p class="subtitle">箏の調弦サポート</p>
+  </header>
+
+  <section class="panel settings" aria-label="調弦設定">
+    <div class="tuning-setting">
+      <label for="tuningSelect">調子 / Tuning</label>
+      <select id="tuningSelect">
+        <option value="hirajoshi" selected>平調子 / Hirajoshi</option>
+        <option value="nogijoshi">乃木調子 / Nogijoshi</option>
+        <option value="kumoijoshi" disabled>雲井調子 / Kumoi-joshi（準備中）</option>
+      </select>
+    </div>
+    <div>
+      <label for="rootNote">一の音 / First string</label>
+      <select id="rootNote">
+        <option value="60">C　神仙</option>
+        <option value="62" selected>D　壱越</option>
+        <option value="64">E　平調</option>
+        <option value="67">G　双調</option>
+        <option value="69">A　黄鐘</option>
+        <option value="71">B　盤渉</option>
+      </select>
+    </div>
+    <div class="pitch-setting">
+      <label for="referencePitch">基準ピッチ / A4</label>
+      <select id="referencePitch">
+        <option value="440">440 Hz</option>
+        <option value="441">441 Hz</option>
+        <option value="442" selected>442 Hz</option>
+        <option value="443">443 Hz</option>
+        <option value="444">444 Hz</option>
+      </select>
+    </div>
+    <div class="octave-option">
+      <button class="octave-toggle" id="ichiGoOtsu" type="button" aria-pressed="false">
+        一は五の乙
+        <span class="toggle-state" id="ichiGoState">OFF</span>
+      </button>
+      <button class="reset" id="resetAll" type="button">個別設定をリセット</button>
+    </div>
+    <div class="sequence-option">
+      <button class="sequence-button" id="playAll" type="button" aria-pressed="false">
+        ▶ 一から巾まで順番に鳴らす
+      </button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="section-title">各絃の音 / String notes</h2>
+    <p class="hint">音名をタップすると電子音が鳴ります。＋／−で半音ずつ調整できます。</p>
+    <div class="strings" id="strings"></div>
+    <p class="footnote">「一は五の乙」をONにすると、一絃だけが五絃より1オクターブ低くなります。低音域は聞き取りやすさのため音量を少し補正しています。</p>
+  </section>
+</main>
+
+<script>
+  // 各調子の音程。一の音を基準にした各絃の半音差。
+  // 乃木調子は、添付いただいたKORG調弦早見表（7ページ）の音名から設定。
+  // 「一は五の乙」はボタンで選択したときだけ一絃を1オクターブ下げる。
+  const strings = [
+    { name: "一" }, { name: "二" }, { name: "三" }, { name: "四" },
+    { name: "五" }, { name: "六" }, { name: "七" }, { name: "八" },
+    { name: "九" }, { name: "十" }, { name: "斗" }, { name: "為" },
+    { name: "巾" }
+  ];
+
+  const tuningOffsets = {
+    hirajoshi: [0, -7, -5, -4, 0, 1, 5, 7, 8, 12, 13, 17, 19],
+    nogijoshi: [0, -7, -5, -3, 0, 2, 5, 7, 9, 12, 14, 17, 19]
+  };
+  const tuningSelect = document.getElementById("tuningSelect");
+
+  const noteNames = ["C", "C♯", "D", "D♯", "E", "F",
+                     "F♯", "G", "G♯", "A", "A♯", "B"];
+  const rootSelect = document.getElementById("rootNote");
+  const pitchSelect = document.getElementById("referencePitch");
+  const stringsContainer = document.getElementById("strings");
+  let adjustments = strings.map(() => 0);
+  let ichiGoOtsuEnabled = false;
+  let audioContext = null;
+  let activeVoice = null;
+  let sequenceId = 0;
+  const playAllButton = document.getElementById("playAll");
+
+  function midiToName(midi) {
+    const pitchClass = ((midi % 12) + 12) % 12;
+    const octave = Math.floor(midi / 12) - 1;
+    return `${noteNames[pitchClass]}${octave}`;
+  }
+
+  function midiToFrequency(midi) {
+    const referencePitch = Number(pitchSelect.value);
+    return referencePitch * Math.pow(2, (midi - 69) / 12);
+  }
+
+  function currentMidi(index) {
+    // 一は五の乙：一絃だけを1オクターブ下げる。
+    const octaveRule = (index === 0 && ichiGoOtsuEnabled) ? -12 : 0;
+    const offsets = tuningOffsets[tuningSelect.value] || tuningOffsets.hirajoshi;
+    return Number(rootSelect.value) + offsets[index] +
+      octaveRule + adjustments[index];
+  }
+
+  function updateSettingHighlights() {
+    const hasIndividualChanges = adjustments.some(value => value !== 0);
+    document.getElementById("resetAll").classList.toggle("has-changes", hasIndividualChanges);
+
+    const ichiGoButton = document.getElementById("ichiGoOtsu");
+    ichiGoButton.setAttribute("aria-pressed", String(ichiGoOtsuEnabled));
+    document.getElementById("ichiGoState").textContent = ichiGoOtsuEnabled ? "ON" : "OFF";
+  }
+
+  function renderStrings() {
+    stringsContainer.innerHTML = "";
+    strings.forEach((string, index) => {
+      const midi = currentMidi(index);
+      const frequency = midiToFrequency(midi);
+      const card = document.createElement("div");
+      card.className = "string-card";
+      if (adjustments[index] !== 0) {
+        card.classList.add("is-adjusted");
+      }
+
+      const number = document.createElement("span");
+      number.className = "string-number";
+      number.textContent = string.name;
+
+      const playButton = document.createElement("button");
+      playButton.className = "note-button";
+      playButton.type = "button";
+      playButton.setAttribute("aria-label", `${string.name}絃 ${midiToName(midi)} を再生`);
+      playButton.innerHTML =
+        `<span class="note-name">${midiToName(midi)}</span>`;
+      playButton.addEventListener("click", () => {
+        cancelSequence();
+        playTone(midiToFrequency(currentMidi(index)));
+      });
+
+      const icon = document.createElement("span");
+      icon.className = "play-icon";
+      icon.textContent = "▶";
+
+      const adjust = document.createElement("div");
+      adjust.className = "adjust";
+
+      const down = document.createElement("button");
+      down.type = "button";
+      down.textContent = "−";
+      down.setAttribute("aria-label", `${string.name}絃を半音下げる`);
+      down.addEventListener("click", () => {
+        adjustments[index] -= 1;
+        renderStrings();
+      });
+
+      const up = document.createElement("button");
+      up.type = "button";
+      up.textContent = "+";
+      up.setAttribute("aria-label", `${string.name}絃を半音上げる`);
+      up.addEventListener("click", () => {
+        adjustments[index] += 1;
+        renderStrings();
+      });
+
+      adjust.append(down, up);
+      card.append(number, playButton, icon, adjust);
+      stringsContainer.append(card);
+    });
+    updateSettingHighlights();
+  }
+
+  function stopActiveTone() {
+    if (!activeVoice || !audioContext) return;
+
+    const voice = activeVoice;
+    activeVoice = null;
+    const now = audioContext.currentTime;
+
+    try {
+      voice.gain.gain.cancelScheduledValues(now);
+      voice.gain.gain.setTargetAtTime(0, now, 0.01);
+      voice.oscillator.stop(now + 0.04);
+    } catch (error) {
+      // すでに停止している場合は何もしない。
+    }
+  }
+
+  async function playTone(frequency, duration = 0.72) {
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === "suspended") await audioContext.resume();
+
+      stopActiveTone();
+
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const now = audioContext.currentTime;
+
+      const lowBoost = frequency <= 220
+        ? 1.4
+        : frequency < 300
+          ? 1 + (0.4 * (300 - frequency) / 80)
+          : 1;
+      const peakGain = Math.min(0.22, 0.16 * lowBoost);
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(peakGain, now + 0.035);
+      gain.gain.setValueAtTime(peakGain, now + duration - 0.07);
+      gain.gain.linearRampToValueAtTime(0, now + duration);
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      return await new Promise((resolve) => {
+        activeVoice = { oscillator, gain };
+        oscillator.addEventListener("ended", () => {
+          oscillator.disconnect();
+          gain.disconnect();
+          if (activeVoice && activeVoice.oscillator === oscillator) {
+            activeVoice = null;
+          }
+          resolve();
+        }, { once: true });
+
+        oscillator.start(now);
+        oscillator.stop(now + duration);
+      });
+    } catch (error) {
+      alert("音声を再生できませんでした。ブラウザの音量設定をご確認ください。");
+      console.error(error);
+    }
+  }
+
+  function cancelSequence() {
+    sequenceId += 1;
+    stopActiveTone();
+    playAllButton.setAttribute("aria-pressed", "false");
+    playAllButton.textContent = "▶ 一から巾まで順番に鳴らす";
+  }
+
+  async function playAllStrings() {
+    if (playAllButton.getAttribute("aria-pressed") === "true") {
+      cancelSequence();
+      return;
+    }
+
+    sequenceId += 1;
+    const thisSequence = sequenceId;
+    const frequencies = strings.map((_, index) => midiToFrequency(currentMidi(index)));
+
+    playAllButton.setAttribute("aria-pressed", "true");
+    playAllButton.textContent = "■ 再生を停止";
+
+    for (const frequency of frequencies) {
+      if (thisSequence !== sequenceId) return;
+      await playTone(frequency, 0.72);
+      if (thisSequence !== sequenceId) return;
+      await new Promise(resolve => setTimeout(resolve, 110));
+    }
+
+    if (thisSequence === sequenceId) {
+      playAllButton.setAttribute("aria-pressed", "false");
+      playAllButton.textContent = "▶ 一から巾まで順番に鳴らす";
+    }
+  }
+
+  tuningSelect.addEventListener("change", () => {
+    cancelSequence();
+    adjustments = strings.map(() => 0);
+    renderStrings();
+  });
+  rootSelect.addEventListener("change", () => {
+    cancelSequence();
+    renderStrings();
+  });
+  pitchSelect.addEventListener("change", () => {
+    cancelSequence();
+    renderStrings();
+  });
+  playAllButton.addEventListener("click", playAllStrings);
+
+  const ichiGoButton = document.getElementById("ichiGoOtsu");
+  const ichiGoState = document.getElementById("ichiGoState");
+  ichiGoButton.addEventListener("click", () => {
+    cancelSequence();
+    ichiGoOtsuEnabled = !ichiGoOtsuEnabled;
+    renderStrings();
+  });
+
+  document.getElementById("resetAll").addEventListener("click", () => {
+    cancelSequence();
+    adjustments = strings.map(() => 0);
+    renderStrings();
+  });
+
+  renderStrings();
+</script>
+</body>
+</html>
