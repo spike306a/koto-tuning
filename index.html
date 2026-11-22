@@ -143,7 +143,7 @@
       <select id="tuningSelect">
         <option value="hirajoshi" selected>平調子 / Hirajoshi</option>
         <option value="nogijoshi">乃木調子 / Nogijoshi</option>
-        <option value="kumoijoshi" disabled>雲井調子 / Kumoi-joshi（準備中）</option>
+        <option value="kumoijoshi">雲井調子 / Kumoi-joshi</option>
       </select>
     </div>
     <div>
@@ -202,7 +202,8 @@
 
   const tuningOffsets = {
     hirajoshi: [0, -7, -5, -4, 0, 1, 5, 7, 8, 12, 13, 17, 19],
-    nogijoshi: [0, -7, -5, -3, 0, 2, 5, 7, 9, 12, 14, 17, 19]
+    nogijoshi: [0, -7, -5, -3, 0, 2, 5, 7, 9, 12, 14, 17, 19],
+    kumoijoshi: [0, -7, -6, -2, 0, 1, 5, 6, 10, 12, 13, 17, 19]
   };
   const tuningSelect = document.getElementById("tuningSelect");
 
