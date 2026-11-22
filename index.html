@@ -32,6 +32,10 @@
     color: var(--accent); font-size: .78rem; font-weight: 650; cursor: pointer;
   }
   .subtitle { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
+  .help-link {
+    display: inline-block; margin-top: 8px; color: var(--accent);
+    font-size: .78rem; text-decoration: underline; text-underline-offset: 3px;
+  }
   .panel {
     background: var(--card);
     border: 1px solid var(--line);
@@ -142,6 +146,7 @@
     <button class="language-toggle" id="languageToggle" type="button">English</button>
     <h1>KOTO TUNING</h1>
     <p class="subtitle" id="subtitle">箏の調弦サポート</p>
+    <a class="help-link" id="helpLink" href="help.html?lang=ja">使い方 / How to use</a>
   </header>
 
   <section class="panel settings" id="settingsPanel" aria-label="調弦設定">
@@ -225,7 +230,7 @@
       audioError: "Unable to play audio. Please check your browser's volume settings."
     }
   };
-  let language = "ja";
+  let language = new URLSearchParams(window.location.search).get("lang") === "en" ? "en" : "ja";
   function applyLanguage() {
     const t = uiText[language];
     document.documentElement.lang = language;
@@ -242,6 +247,9 @@
     document.getElementById("hintText").textContent = t.hint;
     document.getElementById("footnoteText").textContent = t.foot;
     document.getElementById("languageToggle").textContent = language === "ja" ? "English" : "日本語";
+    const helpLink = document.getElementById("helpLink");
+    helpLink.textContent = language === "ja" ? "使い方 / How to use" : "How to use";
+    helpLink.href = `help.html?lang=${language}`;
     renderStrings();
   }
   document.getElementById("languageToggle").addEventListener("click", () => {
@@ -494,7 +502,7 @@
     renderStrings();
   });
 
-  renderStrings();
+  applyLanguage();
 </script>
 </body>
 </html>

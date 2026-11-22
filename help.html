@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f3ee">
+<title>KOTO TUNING | Help</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #26343b;
+    --muted: #68777d;
+    --paper: #f5f3ee;
+    --card: #ffffff;
+    --line: #e5e2da;
+    --accent: #315b73;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 22px 14px 36px;
+    background: var(--paper); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.65;
+  }
+  main { width: min(100%, 620px); margin: 0 auto; }
+  header { position: relative; text-align: center; margin: 4px 0 20px; padding: 0 76px; }
+  h1 { margin: 0; font-size: 1.55rem; letter-spacing: .08em; }
+  .subtitle { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
+  .language-toggle {
+    position: absolute; right: 0; top: 2px; min-height: 34px; padding: 5px 10px;
+    border: 1px solid #d7dce0; border-radius: 9px; background: white;
+    color: var(--accent); font-size: .78rem; font-weight: 650; cursor: pointer;
+  }
+  .panel {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 18px; margin-bottom: 14px;
+  }
+  h2 { margin: 0 0 10px; font-size: 1.08rem; color: var(--accent); }
+  h3 { margin: 16px 0 4px; font-size: .98rem; }
+  p { margin: 6px 0 10px; }
+  ol { padding-left: 1.35rem; margin: 8px 0; }
+  li { margin: 0 0 10px; padding-left: 2px; }
+  .note { color: var(--muted); font-size: .9rem; }
+  .notice { border-left: 4px solid var(--accent); padding: 10px 12px; background: #f3f6f7; border-radius: 6px; }
+  .back {
+    display: inline-block; color: var(--accent); font-weight: 650;
+    text-decoration: none; border: 1px solid #d7dce0; background: white;
+    border-radius: 10px; padding: 9px 14px; margin-top: 4px;
+  }
+  @media (max-width: 420px) {
+    header { padding: 0 66px; }
+    h1 { font-size: 1.3rem; }
+    .panel { padding: 15px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <button class="language-toggle" id="languageToggle" type="button">English</button>
+    <h1>KOTO TUNING</h1>
+    <p class="subtitle" id="subtitle">使い方</p>
+  </header>
+
+  <section class="panel">
+    <h2 id="aboutTitle">このアプリについて</h2>
+    <p id="aboutText">このアプリは、箏の調弦で目標にする音を一覧で確認し、実際に聴くための補助ツールです。</p>
+    <p class="notice" id="noticeText">箏の音程を測定するチューナー機能はありません。音の高さを確認するには、別途チューナーをご使用ください。</p>
+  </section>
+
+  <section class="panel">
+    <h2 id="stepsTitle">使い方</h2>
+    <ol>
+      <li><strong id="step1Title">調子を選ぶ</strong><br><span id="step1Text">演奏する曲に合わせて、調子を選択します。</span></li>
+      <li><strong id="step2Title">一の音を選ぶ</strong><br><span id="step2Text">「一の音」で一絃の基準音を選択します。</span></li>
+      <li><strong id="step3Title">基準ピッチを選ぶ</strong><br><span id="step3Text">「基準ピッチ / A4」で基準となる音の高さ（440～444 Hz）を選びます。</span></li>
+      <li><strong id="step4Title">一は五の乙を設定する</strong><br><span id="step4Text">必要に応じて「一は五の乙」をONにします。一の絃の音を、五の絃の音より1オクターブ低く合わせる設定です。</span></li>
+      <li><strong id="step5Title">音を確認・調整する</strong><br><span id="step5Text">各絃の音名をタップすると音が鳴ります。＋／−で半音ずつ調整できます。</span></li>
+      <li><strong id="step6Title">13本の絃を順番に鳴らす</strong><br><span id="step6Text">「一から巾まで順番に鳴らす」を押すと、一（1）から巾（13）まで順番に再生します。</span></li>
+      <li><strong id="step7Title">個別調整をリセットする</strong><br><span id="step7Text">「個別設定をリセット」を押すと、各絃に加えた個別の音程調整がリセットされます。</span></li>
+    </ol>
+  </section>
+
+  <section class="panel">
+    <h2 id="tipsTitle">調弦するときのポイント</h2>
+    <p id="tipsText">このアプリで目標音を確認し、その音を耳で聴きながら、別途チューナーなどを使って箏の音を合わせてください。</p>
+    <p class="note" id="extraText">音名をタップすると、アプリから基準となる電子音が再生されます。</p>
+  </section>
+
+  <p style="text-align:center"><a class="back" id="backLink" href="index.html">メイン画面に戻る</a></p>
+</main>
+
+<script>
+const copy = {
+  ja: {
+    subtitle: "使い方",
+    aboutTitle: "このアプリについて",
+    aboutText: "このアプリは、箏の調弦で目標にする音を一覧で確認し、実際に聴くための補助ツールです。",
+    noticeText: "箏の音程を測定するチューナー機能はありません。音の高さを確認するには、別途チューナーをご使用ください。",
+    stepsTitle: "使い方",
+    steps: [
+      ["調子を選ぶ", "演奏する曲に合わせて、調子を選択します。"],
+      ["一の音を選ぶ", "「一の音」で一絃の基準音を選択します。"],
+      ["基準ピッチを選ぶ", "「基準ピッチ / A4」で基準となる音の高さ（440～444 Hz）を選びます。"],
+      ["一は五の乙を設定する", "必要に応じて「一は五の乙」をONにします。一の絃の音を、五の絃の音より1オクターブ低く合わせる設定です。"],
+      ["音を確認・調整する", "各絃の音名をタップすると音が鳴ります。＋／−で半音ずつ調整できます。"],
+      ["13本の絃を順番に鳴らす", "「一から巾まで順番に鳴らす」を押すと、一（1）から巾（13）まで順番に再生します。"],
+      ["個別調整をリセットする", "「個別設定をリセット」を押すと、各絃に加えた個別の音程調整がリセットされます。"]
+    ],
+    tipsTitle: "調弦するときのポイント",
+    tipsText: "このアプリで目標音を確認し、その音を耳で聴きながら、別途チューナーなどを使って箏の音を合わせてください。",
+    extraText: "音名をタップすると、アプリから基準となる電子音が再生されます。",
+    back: "メイン画面に戻る"
+  },
+  en: {
+    subtitle: "How to use",
+    aboutTitle: "About this app",
+    aboutText: "This app shows the target notes for koto tuning and lets you listen to each note. It is a tuning reference tool.",
+    noticeText: "This app does not measure the pitch of your koto. Please use a separate tuner to check the pitch of your instrument.",
+    stepsTitle: "How to use",
+    steps: [
+      ["Select a tuning", "Choose the tuning for your music."],
+      ["Set the first string pitch", "Select the starting note for the first string (Ichi)."],
+      ["Set the reference pitch", "Choose the A4 reference pitch (440–444 Hz)."],
+      ["Set the Ichi–Go octave", "Turn ON “Ichi (1): one octave below Go (5)” if needed."],
+      ["Listen to and adjust the notes", "Tap a string's note name to hear its tone. Use + / − to raise or lower the note by one semitone."],
+      ["Play all 13 strings", "Tap “Play all 13 strings in order” to hear the strings from Ichi (1) to Kin (13)."],
+      ["Reset individual adjustments", "Tap “Reset individual adjustments” to clear all individual pitch adjustments."]
+    ],
+    tipsTitle: "Tuning tips",
+    tipsText: "Use this app to check and listen to the target notes. Then use a separate tuner to compare the sound of your koto with the target notes and adjust the bridges.",
+    extraText: "Tap a note name to hear its reference tone from the app.",
+    back: "Back to main screen"
+  }
+};
+let language = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "ja";
+function setText(id, value) { document.getElementById(id).textContent = value; }
+function applyLanguage() {
+  const t = copy[language];
+  document.documentElement.lang = language;
+  setText("subtitle", t.subtitle);
+  setText("aboutTitle", t.aboutTitle);
+  setText("aboutText", t.aboutText);
+  setText("noticeText", t.noticeText);
+  setText("stepsTitle", t.stepsTitle);
+  t.steps.forEach((step, i) => {
+    setText(`step${i + 1}Title`, step[0]);
+    setText(`step${i + 1}Text`, step[1]);
+  });
+  setText("tipsTitle", t.tipsTitle);
+  setText("tipsText", t.tipsText);
+  setText("extraText", t.extraText);
+  setText("backLink", t.back);
+  document.getElementById("backLink").href = `index.html?lang=${language}`;
+  document.getElementById("languageToggle").textContent = language === "ja" ? "English" : "日本語";
+}
+document.getElementById("languageToggle").addEventListener("click", () => {
+  language = language === "ja" ? "en" : "ja";
+  applyLanguage();
+});
+applyLanguage();
+</script>
+</body>
+</html>
