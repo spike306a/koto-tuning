@@ -77,7 +77,7 @@
     border: 1px solid #d7dce0; border-radius: 10px;
     background: white; color: var(--accent);
     font-size: .78rem; font-weight: 600; cursor: pointer;
-    white-space: nowrap; text-decoration: none;
+    white-space: pre-line; text-align: center; line-height: 1.25; text-decoration: none;
     transition: background .15s ease, border-color .15s ease, color .15s ease;
   }
   .reset.has-changes {
@@ -217,11 +217,11 @@
     en: {
       subtitle: "Koto Tuning Assistant", settings: "Tuning settings",
       tuning: "Tuning", root: "First string pitch", pitch: "Reference pitch / A4",
-      ichi: "Ichi string (1): one octave below Go string (5)", reset: "Reset individual adjustments",
+      ichi: "Ichi (1): one octave below Go (5)", reset: "Reset individual\nadjustments",
       sequence: "▶ Play all 13 strings in order", stop: "■ Stop playback",
       strings: "String notes",
       hint: "Tap a note to play its tone. Use + / − to adjust by semitone.",
-      foot: "When ON, string 1 (Ichi) is tuned one octave below string 5 (Go). Low notes are slightly amplified for easier listening.",
+      foot: "Low notes are slightly amplified for easier listening.",
       audioError: "Unable to play audio. Please check your browser's volume settings."
     }
   };
