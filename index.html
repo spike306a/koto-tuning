@@ -107,7 +107,6 @@
     background: transparent; color: var(--ink); text-align: left; cursor: pointer;
   }
   .note-name { display: block; font-size: 1.28rem; font-weight: 700; line-height: 1.2; }
-  .play-icon { color: var(--accent); font-size: 1.15rem; padding: 6px; }
   .adjust { display: flex; gap: 5px; align-items: center; }
   .adjust button {
     width: 42px; height: 42px; padding: 0; border: 1px solid var(--line);
@@ -273,10 +272,6 @@
         playTone(midiToFrequency(currentMidi(index)));
       });
 
-      const icon = document.createElement("span");
-      icon.className = "play-icon";
-      icon.textContent = "▶";
-
       const adjust = document.createElement("div");
       adjust.className = "adjust";
 
@@ -299,7 +294,7 @@
       });
 
       adjust.append(down, up);
-      card.append(number, playButton, icon, adjust);
+      card.append(number, playButton, adjust);
       stringsContainer.append(card);
     });
     updateSettingHighlights();
