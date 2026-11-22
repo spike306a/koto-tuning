@@ -24,8 +24,13 @@
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   main { width: min(100%, 620px); margin: 0 auto; }
-  header { text-align: center; margin: 4px 0 20px; }
+  header { position: relative; text-align: center; margin: 4px 0 20px; padding: 0 76px; }
   h1 { margin: 0; font-size: 1.55rem; letter-spacing: .08em; }
+  .language-toggle {
+    position: absolute; right: 0; top: 2px; min-height: 34px; padding: 5px 10px;
+    border: 1px solid #d7dce0; border-radius: 9px; background: white;
+    color: var(--accent); font-size: .78rem; font-weight: 650; cursor: pointer;
+  }
   .subtitle { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
   .panel {
     background: var(--card);
@@ -102,6 +107,7 @@
     width: 42px; flex: 0 0 42px; color: var(--accent);
     font-size: 1.12rem; font-weight: 750; text-align: center;
   }
+  html[lang="en"] .string-number { width: 68px; flex-basis: 68px; font-size: .98rem; white-space: nowrap; }
   .note-button {
     flex: 1; min-width: 0; border: 0; padding: 5px 2px;
     background: transparent; color: var(--ink); text-align: left; cursor: pointer;
@@ -124,6 +130,7 @@
     .reset { padding-inline: 9px; font-size: .72rem; }
     .string-card { gap: 8px; padding: 8px 9px; }
     .string-number { width: 38px; flex-basis: 38px; }
+    html[lang="en"] .string-number { width: 64px; flex-basis: 64px; font-size: .92rem; }
     .adjust { gap: 5px; }
     .adjust button { width: 40px; height: 42px; }
   }
@@ -132,13 +139,14 @@
 <body>
 <main>
   <header>
+    <button class="language-toggle" id="languageToggle" type="button">English</button>
     <h1>KOTO TUNING</h1>
-    <p class="subtitle">箏の調弦サポート</p>
+    <p class="subtitle" id="subtitle">箏の調弦サポート</p>
   </header>
 
-  <section class="panel settings" aria-label="調弦設定">
+  <section class="panel settings" id="settingsPanel" aria-label="調弦設定">
     <div class="tuning-setting">
-      <label for="tuningSelect">調子 / Tuning</label>
+      <label for="tuningSelect" id="tuningLabel">調子 / Tuning</label>
       <select id="tuningSelect">
         <option value="hirajoshi" selected>平調子 / Hira-joshi</option>
         <option value="nogijoshi">乃木調子 / Nogi-joshi</option>
@@ -152,7 +160,7 @@
       </select>
     </div>
     <div>
-      <label for="rootNote">一の音 / First string</label>
+      <label for="rootNote" id="rootLabel">一の音 / First string</label>
       <select id="rootNote">
         <option value="60">C　神仙</option>
         <option value="62" selected>D　壱越</option>
@@ -163,7 +171,7 @@
       </select>
     </div>
     <div class="pitch-setting">
-      <label for="referencePitch">基準ピッチ / A4</label>
+      <label for="referencePitch" id="pitchLabel">基準ピッチ / A4</label>
       <select id="referencePitch">
         <option value="440">440 Hz</option>
         <option value="441">441 Hz</option>
@@ -174,27 +182,73 @@
     </div>
     <div class="octave-option">
       <button class="octave-toggle" id="ichiGoOtsu" type="button" aria-pressed="false">
-        一は五の乙
+        <span id="ichiGoLabel">一は五の乙</span>
         <span class="toggle-state" id="ichiGoState">OFF</span>
       </button>
       <button class="reset" id="resetAll" type="button">個別設定をリセット</button>
     </div>
     <div class="sequence-option">
       <button class="sequence-button" id="playAll" type="button" aria-pressed="false">
-        ▶ 一から巾まで順番に鳴らす
+        <span id="playAllLabel">▶ 一から巾まで順番に鳴らす</span>
       </button>
     </div>
   </section>
 
   <section class="panel">
-    <h2 class="section-title">各絃の音 / String notes</h2>
-    <p class="hint">音名をタップすると電子音が鳴ります。＋／−で半音ずつ調整できます。</p>
+    <h2 class="section-title" id="stringsTitle">各絃の音 / String notes</h2>
+    <p class="hint" id="hintText">音名をタップすると電子音が鳴ります。＋／−で半音ずつ調整できます。</p>
     <div class="strings" id="strings"></div>
-    <p class="footnote">「一は五の乙」をONにすると、一絃だけが五絃より1オクターブ低くなります。低音域は聞き取りやすさのため音量を少し補正しています。</p>
+    <p class="footnote" id="footnoteText">「一は五の乙」をONにすると、一絃だけが五絃より1オクターブ低くなります。低音域は聞き取りやすさのため音量を少し補正しています。</p>
   </section>
 </main>
 
 <script>
+  const uiText = {
+    ja: {
+      subtitle: "箏の調弦サポート", settings: "調弦設定",
+      tuning: "調子 / Tuning", root: "一の音 / First string",
+      pitch: "基準ピッチ / A4", ichi: "一は五の乙",
+      reset: "個別設定をリセット", sequence: "▶ 一から巾まで順番に鳴らす",
+      stop: "■ 再生を停止", strings: "各絃の音 / String notes",
+      hint: "音名をタップすると電子音が鳴ります。＋／−で半音ずつ調整できます。",
+      foot: "「一は五の乙」をONにすると、一絃だけが五絃より1オクターブ低くなります。低音域は聞き取りやすさのため音量を少し補正しています。",
+      audioError: "音声を再生できませんでした。ブラウザの音量設定をご確認ください。"
+    },
+    en: {
+      subtitle: "Koto Tuning Assistant", settings: "Tuning settings",
+      tuning: "Tuning", root: "First string pitch", pitch: "Reference pitch / A4",
+      ichi: "Ichi string (1): one octave below Go string (5)", reset: "Reset individual adjustments",
+      sequence: "▶ Play all 13 strings in order", stop: "■ Stop playback",
+      strings: "String notes",
+      hint: "Tap a note to play its tone. Use + / − to adjust by semitone.",
+      foot: "When ON, string 1 (Ichi) is tuned one octave below string 5 (Go). Low notes are slightly amplified for easier listening.",
+      audioError: "Unable to play audio. Please check your browser's volume settings."
+    }
+  };
+  let language = "ja";
+  function applyLanguage() {
+    const t = uiText[language];
+    document.documentElement.lang = language;
+    document.getElementById("subtitle").textContent = t.subtitle;
+    document.getElementById("settingsPanel").setAttribute("aria-label", t.settings);
+    document.getElementById("tuningLabel").textContent = t.tuning;
+    document.getElementById("rootLabel").textContent = t.root;
+    document.getElementById("pitchLabel").textContent = t.pitch;
+    document.getElementById("ichiGoLabel").textContent = t.ichi;
+    document.getElementById("resetAll").textContent = t.reset;
+    document.getElementById("playAllLabel").textContent =
+      playAllButton.getAttribute("aria-pressed") === "true" ? t.stop : t.sequence;
+    document.getElementById("stringsTitle").textContent = t.strings;
+    document.getElementById("hintText").textContent = t.hint;
+    document.getElementById("footnoteText").textContent = t.foot;
+    document.getElementById("languageToggle").textContent = language === "ja" ? "English" : "日本語";
+    renderStrings();
+  }
+  document.getElementById("languageToggle").addEventListener("click", () => {
+    language = language === "ja" ? "en" : "ja";
+    applyLanguage();
+  });
+
   // 各調子の音程。一の音を基準にした各絃の半音差。
   // 乃木調子は、添付いただいたKORG調弦早見表（7ページ）の音名から設定。
   // 「一は五の乙」はボタンで選択したときだけ一絃を1オクターブ下げる。
@@ -271,12 +325,12 @@
 
       const number = document.createElement("span");
       number.className = "string-number";
-      number.textContent = string.name;
+      number.textContent = language === "ja" ? string.name : `${string.name} (${index + 1})`;
 
       const playButton = document.createElement("button");
       playButton.className = "note-button";
       playButton.type = "button";
-      playButton.setAttribute("aria-label", `${string.name}絃 ${midiToName(midi)} を再生`);
+      playButton.setAttribute("aria-label", language === "ja" ? `${string.name}絃 ${midiToName(midi)} を再生` : `Play string ${string.name}, ${midiToName(midi)}`);
       playButton.innerHTML =
         `<span class="note-name">${midiToName(midi)}</span>`;
       playButton.addEventListener("click", () => {
@@ -290,7 +344,7 @@
       const down = document.createElement("button");
       down.type = "button";
       down.textContent = "−";
-      down.setAttribute("aria-label", `${string.name}絃を半音下げる`);
+      down.setAttribute("aria-label", language === "ja" ? `${string.name}絃を半音下げる` : `Lower string ${string.name} by one semitone`);
       down.addEventListener("click", () => {
         adjustments[index] -= 1;
         renderStrings();
@@ -299,7 +353,7 @@
       const up = document.createElement("button");
       up.type = "button";
       up.textContent = "+";
-      up.setAttribute("aria-label", `${string.name}絃を半音上げる`);
+      up.setAttribute("aria-label", language === "ja" ? `${string.name}絃を半音上げる` : `Raise string ${string.name} by one semitone`);
       up.addEventListener("click", () => {
         adjustments[index] += 1;
         renderStrings();
@@ -373,7 +427,7 @@
         oscillator.stop(now + duration);
       });
     } catch (error) {
-      alert("音声を再生できませんでした。ブラウザの音量設定をご確認ください。");
+      alert(uiText[language].audioError);
       console.error(error);
     }
   }
@@ -382,7 +436,7 @@
     sequenceId += 1;
     stopActiveTone();
     playAllButton.setAttribute("aria-pressed", "false");
-    playAllButton.textContent = "▶ 一から巾まで順番に鳴らす";
+    document.getElementById("playAllLabel").textContent = uiText[language].sequence;
   }
 
   async function playAllStrings() {
@@ -396,7 +450,7 @@
     const frequencies = strings.map((_, index) => midiToFrequency(currentMidi(index)));
 
     playAllButton.setAttribute("aria-pressed", "true");
-    playAllButton.textContent = "■ 再生を停止";
+    document.getElementById("playAllLabel").textContent = uiText[language].stop;
 
     for (const frequency of frequencies) {
       if (thisSequence !== sequenceId) return;
@@ -407,7 +461,7 @@
 
     if (thisSequence === sequenceId) {
       playAllButton.setAttribute("aria-pressed", "false");
-      playAllButton.textContent = "▶ 一から巾まで順番に鳴らす";
+      document.getElementById("playAllLabel").textContent = uiText[language].sequence;
     }
   }
 
